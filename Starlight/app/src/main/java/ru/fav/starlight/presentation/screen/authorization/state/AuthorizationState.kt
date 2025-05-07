@@ -1,4 +1,4 @@
-package ru.fav.starlight.presentation.screen.authorization
+package ru.fav.starlight.presentation.screen.authorization.state
 
 sealed class AuthorizationState {
     object Initial : AuthorizationState()

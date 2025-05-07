@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.fav.starlight.R
 import ru.fav.starlight.databinding.FragmentAuthorizationBinding
+import ru.fav.starlight.presentation.screen.authorization.state.AuthorizationEvent
+import ru.fav.starlight.presentation.screen.authorization.state.AuthorizationState
 import ru.fav.starlight.presentation.util.ErrorDialogUtil
-import ru.fav.starlight.util.observe
+import ru.fav.starlight.presentation.util.observe
 
 @AndroidEntryPoint
 class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
@@ -29,7 +30,7 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
 
         this?.buttonSignIn?.setOnClickListener {
             val apiKey = this.editTextApiKey.text.toString().trim()
-            authorizationViewModel.authorize(apiKey)
+            authorizationViewModel.reduce(event = AuthorizationEvent.OnSignInClicked(apiKey))
         }
     }
 
@@ -47,7 +48,6 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
                 is AuthorizationState.Success -> {
                     showLoading(false)
                     hideFieldError()
-                    navigateToProfileFragment()
                 }
 
                 is AuthorizationState.Error.FieldError -> {
@@ -84,9 +84,5 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
     override fun onDestroyView() {
         super.onDestroyView()
         viewBinding = null
-    }
-
-    private fun navigateToProfileFragment() {
-        findNavController().navigate(R.id.action_authorization_to_search)
     }
 }

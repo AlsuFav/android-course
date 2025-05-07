@@ -1,4 +1,4 @@
-package ru.fav.starlight.presentation.adapter
+package ru.fav.starlight.presentation.screen.search.adapter
 
 import android.view.LayoutInflater
 import android.view.View

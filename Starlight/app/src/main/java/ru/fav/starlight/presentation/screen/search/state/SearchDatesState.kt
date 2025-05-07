@@ -1,4 +1,4 @@
-package ru.fav.starlight.presentation.screen.search
+package ru.fav.starlight.presentation.screen.search.state
 
 data class SearchDatesState(
     val startDate: String = "",

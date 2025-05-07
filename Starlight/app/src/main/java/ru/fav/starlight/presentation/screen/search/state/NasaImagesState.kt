@@ -1,4 +1,4 @@
-package ru.fav.starlight.presentation.screen.search
+package ru.fav.starlight.presentation.screen.search.state
 
 import ru.fav.starlight.domain.model.NasaImageModel
 

@@ -1,4 +1,4 @@
-package ru.fav.starlight.presentation.screen.splash
+package ru.fav.starlight.presentation.screen.splash.state
 
 sealed class SplashState {
     object Loading : SplashState()

@@ -3,8 +3,10 @@ package ru.fav.starlight.presentation.screen.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -15,6 +17,12 @@ import ru.fav.starlight.domain.exception.ServerException
 import ru.fav.starlight.domain.provider.DateProvider
 import ru.fav.starlight.domain.provider.ResourceProvider
 import ru.fav.starlight.domain.usecase.GetNasaImagesUseCase
+import ru.fav.starlight.presentation.navigation.NavMain
+import ru.fav.starlight.presentation.screen.search.state.DateType
+import ru.fav.starlight.presentation.screen.search.state.NasaImagesState
+import ru.fav.starlight.presentation.screen.search.state.SearchDatesState
+import ru.fav.starlight.presentation.screen.search.state.SearchEffect
+import ru.fav.starlight.presentation.screen.search.state.SearchEvent
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -22,7 +30,8 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val getNasaImagesUseCase: GetNasaImagesUseCase,
     private val dateProvider: DateProvider,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val navMain: NavMain,
 ) : ViewModel() {
 
     private val _searchDatesState = MutableStateFlow(SearchDatesState())
@@ -32,8 +41,23 @@ class SearchViewModel @Inject constructor(
     private val _nasaImagesState = MutableStateFlow<NasaImagesState>(NasaImagesState.Initial)
     val nasaImagesState = _nasaImagesState.asStateFlow()
 
+    private val _effect = MutableSharedFlow<SearchEffect>()
+    val effect = _effect.asSharedFlow()
+
     init {
-        loadInitialDates()
+        reduce(SearchEvent.LoadInitialData)
+    }
+
+    fun reduce(event: SearchEvent) {
+        when (event) {
+            is SearchEvent.LoadInitialData -> loadInitialDates()
+            is SearchEvent.LoadCurrentTimeMillis -> getCurrentTimeMillis()
+            is SearchEvent.OnFetchImagesClicked -> loadNasaImages(event.startDate, event.endDate)
+            is SearchEvent.OnStartDateClicked -> showDatePicker(DateType.START)
+            is SearchEvent.OnEndDateClicked -> showDatePicker(DateType.END)
+            is SearchEvent.OnDateSelected -> onDateSelected(event.type, event.calendar)
+            is SearchEvent.OnNasaImageClicked -> navigateToDetails(event.date)
+        }
     }
 
     fun loadNasaImages(startDate: String, endDate: String) {
@@ -100,7 +124,17 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    private fun showDatePicker(type: DateType) {
+        viewModelScope.launch {
+            _effect.emit(SearchEffect.ShowDatePicker(type, dateProvider.getCurrentDate().timeInMillis))
+        }
+    }
+
     fun getCurrentTimeMillis(): Long = dateProvider.getCurrentDate().timeInMillis
+
+    private fun navigateToDetails(date: String) {
+        navMain.goToDetailsPage(date)
+    }
 
     override fun onCleared() {
         super.onCleared()

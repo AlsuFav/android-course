@@ -1,4 +1,4 @@
-package ru.fav.starlight.presentation.screen.details
+package ru.fav.starlight.presentation.screen.details.state
 
 import ru.fav.starlight.domain.model.NasaImageDetailsModel
 

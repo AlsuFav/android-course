@@ -5,13 +5,15 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.fav.starlight.R
 import ru.fav.starlight.databinding.FragmentProfileBinding
+import ru.fav.starlight.presentation.screen.profile.state.ClearApiKeyState
+import ru.fav.starlight.presentation.screen.profile.state.ProfileEvent
+import ru.fav.starlight.presentation.screen.profile.state.UpdateApiKeyState
 import ru.fav.starlight.presentation.util.ErrorDialogUtil
-import ru.fav.starlight.util.hideKeyboard
-import ru.fav.starlight.util.observe
+import ru.fav.starlight.presentation.util.hideKeyboard
+import ru.fav.starlight.presentation.util.observe
 import kotlin.getValue
 
 @AndroidEntryPoint
@@ -32,12 +34,12 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
 
         this?.buttonUpdateApiKey?.setOnClickListener {
             val apiKey = this.editTextApiKey.text.toString().trim()
-            profileViewModel.updateApiKey(apiKey)
+            profileViewModel.reduce(event = ProfileEvent.OnUpdateApiKeyClicked(apiKey))
             hideKeyboard()
         }
 
         this?.buttonLogOut?.setOnClickListener {
-            profileViewModel.deleteApiKey()
+            profileViewModel.reduce(event = ProfileEvent.OnLogOutClicked)
         }
     }
 
@@ -87,7 +89,6 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
                 is ClearApiKeyState.Success -> {
                     showLogOutButtonLoading(false)
                     hideFieldError()
-                    navigateToAuthorizationFragment()
                 }
 
                 is ClearApiKeyState.Error -> {
@@ -128,9 +129,5 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
     override fun onDestroyView() {
         super.onDestroyView()
         viewBinding = null
-    }
-
-    private fun navigateToAuthorizationFragment() {
-        findNavController().navigate(R.id.action_profile_to_authorization)
     }
 }

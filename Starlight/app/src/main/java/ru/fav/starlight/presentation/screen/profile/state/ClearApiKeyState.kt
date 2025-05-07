@@ -1,4 +1,4 @@
-package ru.fav.starlight.presentation.screen.profile
+package ru.fav.starlight.presentation.screen.profile.state
 
 sealed class ClearApiKeyState {
     object Initial : ClearApiKeyState()

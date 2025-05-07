@@ -9,16 +9,26 @@ import kotlinx.coroutines.launch
 import ru.fav.starlight.R
 import ru.fav.starlight.domain.provider.ResourceProvider
 import ru.fav.starlight.domain.usecase.SaveApiKeyUseCase
+import ru.fav.starlight.presentation.navigation.NavMain
+import ru.fav.starlight.presentation.screen.authorization.state.AuthorizationEvent
+import ru.fav.starlight.presentation.screen.authorization.state.AuthorizationState
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthorizationViewModel @Inject constructor(
     private val saveApiKeyUseCase: SaveApiKeyUseCase,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val navMain: NavMain,
 ) : ViewModel() {
 
     private val _authorizationState = MutableStateFlow<AuthorizationState>(AuthorizationState.Initial)
     val authorizationState = _authorizationState.asStateFlow()
+
+    fun reduce(event: AuthorizationEvent) {
+        when (event) {
+            is AuthorizationEvent.OnSignInClicked -> authorize(event.apiKey)
+        }
+    }
 
     fun authorize(apiKey: String) {
         validateInput(apiKey)?.let { errorMessage ->
@@ -32,7 +42,10 @@ class AuthorizationViewModel @Inject constructor(
             runCatching {
                 saveApiKeyUseCase(apiKey)
             }.fold(
-                onSuccess = { _authorizationState.value = AuthorizationState.Success },
+                onSuccess = {
+                    _authorizationState.value = AuthorizationState.Success
+                    navigateToProfile()
+                },
                 onFailure = { _authorizationState.value = handleError() }
             )
         }
@@ -47,6 +60,10 @@ class AuthorizationViewModel @Inject constructor(
 
     private fun handleError(): AuthorizationState.Error {
         return AuthorizationState.Error.GlobalError(resourceProvider.getString(R.string.error_unknown))
+    }
+
+    private fun navigateToProfile() {
+        navMain.goToProfilePage()
     }
 
     override fun onCleared() {

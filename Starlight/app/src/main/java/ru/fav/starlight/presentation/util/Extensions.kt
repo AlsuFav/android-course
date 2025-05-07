@@ -1,7 +1,8 @@
-package ru.fav.starlight.util
+package ru.fav.starlight.presentation.util
 
+import android.content.Context
 import android.view.View
-import androidx.core.content.ContentProviderCompat.requireContext
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -35,8 +36,8 @@ inline fun <T> Flow<T>.observeNotSuspend(
 }
 
 fun Fragment.hideKeyboard() {
-    val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
-            as android.view.inputmethod.InputMethodManager
+    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE)
+            as InputMethodManager
     val view = requireView().rootView.findFocus() ?: View(requireContext())
     imm.hideSoftInputFromWindow(view.windowToken, 0)
 }

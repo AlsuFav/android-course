@@ -12,13 +12,16 @@ import ru.fav.starlight.R
 import ru.fav.starlight.databinding.FragmentDetailsBinding
 import ru.fav.starlight.domain.model.NasaImageDetailsModel
 import ru.fav.starlight.presentation.util.ErrorDialogUtil
-import ru.fav.starlight.util.observe
+import ru.fav.starlight.presentation.util.observe
 import kotlin.getValue
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import ru.fav.starlight.presentation.screen.details.state.DetailsEvent
+import ru.fav.starlight.presentation.screen.details.state.NasaImageDetailsState
+import ru.fav.starlight.presentation.screen.profile.state.ProfileEvent
 
 @AndroidEntryPoint
 class DetailsFragment: Fragment(R.layout.fragment_details) {
@@ -35,12 +38,12 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
         initViews()
         observeViewModel()
 
-        detailsViewModel.loadNasaImageDetails(args.date)
+        detailsViewModel.reduce(event = DetailsEvent.GetNasaImageDetails(args.date))
     }
 
     private fun initViews() = with(viewBinding) {
         this?.buttonBack?.setOnClickListener {
-            navigateBack()
+            detailsViewModel.reduce(event = DetailsEvent.OnBackClicked)
         }
     }
 
@@ -137,11 +140,6 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
             }
         }
     }
-
-    private fun navigateBack() {
-        findNavController().navigateUp()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         viewBinding = null

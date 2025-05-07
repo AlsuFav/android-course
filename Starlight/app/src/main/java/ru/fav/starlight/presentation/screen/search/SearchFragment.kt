@@ -9,11 +9,15 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.fav.starlight.R
 import ru.fav.starlight.databinding.FragmentSearchBinding
-import ru.fav.starlight.presentation.adapter.NasaImagesAdapter
-import ru.fav.starlight.presentation.adapter.NasaImagesShimmerAdapter
+import ru.fav.starlight.presentation.screen.search.adapter.NasaImagesAdapter
+import ru.fav.starlight.presentation.screen.search.adapter.NasaImagesShimmerAdapter
+import ru.fav.starlight.presentation.screen.search.state.DateType
+import ru.fav.starlight.presentation.screen.search.state.NasaImagesState
+import ru.fav.starlight.presentation.screen.search.state.SearchEffect
+import ru.fav.starlight.presentation.screen.search.state.SearchEvent
 import ru.fav.starlight.presentation.util.ErrorDialogUtil
-import ru.fav.starlight.util.observe
-import ru.fav.starlight.util.observeNotSuspend
+import ru.fav.starlight.presentation.util.observe
+import ru.fav.starlight.presentation.util.observeNotSuspend
 import java.util.Calendar
 
 @AndroidEntryPoint
@@ -36,13 +40,14 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
     private fun initViews() = with(viewBinding) {
         setupRecyclerViews()
 
-        this?.editTextStartDate?.setOnClickListener { showDatePicker(DateType.START) }
-        this?.editTextEndDate?.setOnClickListener { showDatePicker(DateType.END) }
+        this?.editTextStartDate?.setOnClickListener { searchViewModel.reduce(SearchEvent.OnStartDateClicked) }
+        this?.editTextEndDate?.setOnClickListener { searchViewModel.reduce(SearchEvent.OnEndDateClicked) }
 
         this?.buttonFetchImages?.setOnClickListener {
             val startDate = this.editTextStartDate.text.toString()
             val endDate = this.editTextEndDate.text.toString()
-            searchViewModel.loadNasaImages(startDate, endDate)
+
+            searchViewModel.reduce(SearchEvent.OnFetchImagesClicked(startDate, endDate))
         }
 
     }
@@ -52,6 +57,12 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
             viewBinding?.apply {
                 editTextStartDate.setText(state.startDate)
                 editTextEndDate.setText(state.endDate)
+            }
+        }
+
+        searchViewModel.effect.observeNotSuspend(viewLifecycleOwner) { state ->
+            when (state) {
+                is SearchEffect.ShowDatePicker -> showDatePicker(state.type, state.maxDateMillis)
             }
         }
 
@@ -89,7 +100,7 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
 
     private fun setupRecyclerViews() {
         rvAdapter = NasaImagesAdapter { nasaImage ->
-            navigateToDetailsFragment(nasaImage.date)
+            searchViewModel.reduce(SearchEvent.OnNasaImageClicked(nasaImage.date))
         }
         viewBinding?.recyclerViewNasaImages?.adapter = rvAdapter
 
@@ -97,18 +108,18 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
         viewBinding?.recyclerViewShimmer?.adapter = rvShimmerAdapter
     }
 
-    private fun showDatePicker(dateType: DateType) {
+    private fun showDatePicker(dateType: DateType, maxDateMillis: Long) {
         DatePickerDialog(
             requireContext(),
             { _, year, month, day ->
                 val selectedDate = Calendar.getInstance().apply { set(year, month, day) }
-                searchViewModel.onDateSelected(dateType, selectedDate)
+                searchViewModel.reduce(SearchEvent.OnDateSelected(dateType, selectedDate))
             },
             Calendar.getInstance().get(Calendar.YEAR),
             Calendar.getInstance().get(Calendar.MONTH),
             Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
         ).apply {
-            datePicker.maxDate = searchViewModel.getCurrentTimeMillis()
+            datePicker.maxDate = maxDateMillis
             show()
         }
     }
@@ -139,12 +150,6 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
     private fun hideErrorField() {
         viewBinding?.textError?.visibility = View.GONE
     }
-
-    private fun navigateToDetailsFragment(date: String) {
-        val action = SearchFragmentDirections.actionSearchToDetails(date)
-        findNavController().navigate(action)
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

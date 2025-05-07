@@ -10,13 +10,19 @@ import ru.fav.starlight.R
 import ru.fav.starlight.domain.provider.ResourceProvider
 import ru.fav.starlight.domain.usecase.ClearApiKeyUseCase
 import ru.fav.starlight.domain.usecase.SaveApiKeyUseCase
+import ru.fav.starlight.presentation.navigation.NavMain
+import ru.fav.starlight.presentation.screen.profile.state.ClearApiKeyState
+import ru.fav.starlight.presentation.screen.profile.state.ProfileEvent
+import ru.fav.starlight.presentation.screen.profile.state.UpdateApiKeyState
+import ru.fav.starlight.presentation.screen.splash.state.SplashEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val saveApiKeyUseCase: SaveApiKeyUseCase,
     private val clearApiKeyUseCase: ClearApiKeyUseCase,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val navMain: NavMain,
 ) : ViewModel() {
 
     private val _updateApiKeyState = MutableStateFlow<UpdateApiKeyState>(UpdateApiKeyState.Initial)
@@ -24,6 +30,13 @@ class ProfileViewModel @Inject constructor(
 
     private val _clearApiKeyState = MutableStateFlow<ClearApiKeyState>(ClearApiKeyState.Initial)
     val clearApiKeyState = _clearApiKeyState.asStateFlow()
+
+    fun reduce(event: ProfileEvent) {
+        when (event) {
+            is ProfileEvent.OnUpdateApiKeyClicked -> updateApiKey(event.apiKey)
+            is ProfileEvent.OnLogOutClicked -> deleteApiKey()
+        }
+    }
 
     fun updateApiKey(apiKey: String) {
         validateInput(apiKey)?.let { errorMessage ->
@@ -51,7 +64,10 @@ class ProfileViewModel @Inject constructor(
             runCatching {
                 clearApiKeyUseCase()
             }.fold(
-                onSuccess = { _clearApiKeyState.value = ClearApiKeyState.Success },
+                onSuccess = {
+                    _clearApiKeyState.value = ClearApiKeyState.Success
+                    navigateToAuthorization()
+                },
                 onFailure = { _clearApiKeyState.value =
                     ClearApiKeyState.Error(resourceProvider.getString(R.string.error_unknown)) }
             )
@@ -63,6 +79,10 @@ class ProfileViewModel @Inject constructor(
             apiKey.isEmpty() -> resourceProvider.getString(R.string.error_fill_field)
             else -> null
         }
+    }
+
+    private fun navigateToAuthorization() {
+        navMain.goToAuthorizationPage()
     }
 
     override fun onCleared() {

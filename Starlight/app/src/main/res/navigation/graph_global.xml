@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/graph_global"
+    app:startDestination="@id/destination_splash">
+
+    <action
+        android:id="@+id/action_global_splash"
+        app:destination="@id/destination_splash"/>
+
+    <fragment
+        android:id="@+id/destination_splash"
+        android:name="ru.fav.starlight.presentation.screen.splash.SplashFragment"
+        android:label="Splash" />
+
+    <action
+        android:id="@+id/action_global_authorization"
+        app:destination="@id/destination_authorization"/>
+
+    <fragment
+        android:id="@+id/destination_authorization"
+        android:name="ru.fav.starlight.presentation.screen.authorization.AuthorizationFragment"
+        android:label="Authorization" />
+
+    <action
+        android:id="@+id/action_global_search"
+        app:destination="@id/destination_search"/>
+
+    <fragment
+        android:id="@+id/destination_search"
+        android:name="ru.fav.starlight.presentation.screen.search.SearchFragment"
+        android:label="Search" />
+
+    <action
+        android:id="@+id/action_global_profile"
+        app:destination="@id/destination_profile"/>
+
+    <fragment
+        android:id="@+id/destination_profile"
+        android:name="ru.fav.starlight.presentation.screen.profile.ProfileFragment"
+        android:label="Profile" />
+
+    <action
+        android:id="@+id/action_global_details"
+        app:destination="@id/destination_details" />
+
+    <fragment
+        android:id="@+id/destination_details"
+        android:name="ru.fav.starlight.presentation.screen.details.DetailsFragment"
+        android:label="Details">
+
+        <argument
+            android:name="date"
+            app:argType="string" />
+    </fragment>
+</navigation>
