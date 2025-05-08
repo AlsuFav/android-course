@@ -32,7 +32,7 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    fun getApiKey() {
+    private fun getApiKey() {
         viewModelScope.launch {
             runCatching {
                 getApiKeyUseCase()

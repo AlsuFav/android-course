@@ -37,7 +37,6 @@ class SearchViewModel @Inject constructor(
     private val _searchDatesState = MutableStateFlow(SearchDatesState())
     val searchDatesState: StateFlow<SearchDatesState> = _searchDatesState.asStateFlow()
 
-
     private val _nasaImagesState = MutableStateFlow<NasaImagesState>(NasaImagesState.Initial)
     val nasaImagesState = _nasaImagesState.asStateFlow()
 
@@ -60,7 +59,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun loadNasaImages(startDate: String, endDate: String) {
+    private fun loadNasaImages(startDate: String, endDate: String) {
         validateInputs(startDate, endDate)?.let { errorMessage ->
             _nasaImagesState.value = NasaImagesState.Error.FieldError(errorMessage)
             return
@@ -114,7 +113,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun onDateSelected(dateType: DateType, calendar: Calendar) {
+    private fun onDateSelected(dateType: DateType, calendar: Calendar) {
         val date = dateProvider.formatDate(calendar)
         _searchDatesState.update { state ->
             when(dateType) {
@@ -130,7 +129,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentTimeMillis(): Long = dateProvider.getCurrentDate().timeInMillis
+    private fun getCurrentTimeMillis(): Long = dateProvider.getCurrentDate().timeInMillis
 
     private fun navigateToDetails(date: String) {
         navMain.goToDetailsPage(date)

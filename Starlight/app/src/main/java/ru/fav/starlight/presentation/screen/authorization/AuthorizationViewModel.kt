@@ -30,7 +30,7 @@ class AuthorizationViewModel @Inject constructor(
         }
     }
 
-    fun authorize(apiKey: String) {
+    private fun authorize(apiKey: String) {
         validateInput(apiKey)?.let { errorMessage ->
             _authorizationState.value = AuthorizationState.Error.FieldError(errorMessage)
             return

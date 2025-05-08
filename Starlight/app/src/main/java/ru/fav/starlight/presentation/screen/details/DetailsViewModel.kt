@@ -36,7 +36,7 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    fun loadNasaImageDetails(date: String) {
+    private fun loadNasaImageDetails(date: String) {
         viewModelScope.launch {
             runCatching {
                 getNasaImageDetailsUseCase(date)

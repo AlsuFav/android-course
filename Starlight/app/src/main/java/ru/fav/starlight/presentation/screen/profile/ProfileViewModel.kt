@@ -38,7 +38,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateApiKey(apiKey: String) {
+    private fun updateApiKey(apiKey: String) {
         validateInput(apiKey)?.let { errorMessage ->
             _updateApiKeyState.value = UpdateApiKeyState.Error.FieldError(errorMessage)
             return
@@ -57,7 +57,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun deleteApiKey() {
+    private fun deleteApiKey() {
         _clearApiKeyState.value = ClearApiKeyState.Loading
 
         viewModelScope.launch {

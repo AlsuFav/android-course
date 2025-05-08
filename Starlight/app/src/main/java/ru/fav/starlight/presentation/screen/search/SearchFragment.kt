@@ -5,7 +5,6 @@ import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
-import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.fav.starlight.R
@@ -40,8 +39,12 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
     private fun initViews() = with(viewBinding) {
         setupRecyclerViews()
 
-        this.editTextStartDate.setOnClickListener { searchViewModel.reduce(SearchEvent.OnStartDateClicked) }
-        this.editTextEndDate.setOnClickListener { searchViewModel.reduce(SearchEvent.OnEndDateClicked) }
+        this.editTextStartDate.setOnClickListener {
+            searchViewModel.reduce(SearchEvent.OnStartDateClicked)
+        }
+        this.editTextEndDate.setOnClickListener {
+            searchViewModel.reduce(SearchEvent.OnEndDateClicked)
+        }
 
         this.buttonFetchImages.setOnClickListener {
             val startDate = this.editTextStartDate.text.toString()
