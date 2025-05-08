@@ -3,6 +3,7 @@ package ru.fav.starlight.presentation.screen.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.fav.starlight.R
+import ru.fav.starlight.domain.cache.NasaImagesCacheManager
 import ru.fav.starlight.domain.exception.ForbiddenAccessException
 import ru.fav.starlight.domain.exception.NetworkException
 import ru.fav.starlight.domain.exception.ServerException
@@ -31,6 +33,7 @@ class SearchViewModel @Inject constructor(
     private val getNasaImagesUseCase: GetNasaImagesUseCase,
     private val dateProvider: DateProvider,
     private val resourceProvider: ResourceProvider,
+    private val cacheManager: NasaImagesCacheManager,
     private val navMain: NavMain,
 ) : ViewModel() {
 
@@ -40,7 +43,10 @@ class SearchViewModel @Inject constructor(
     private val _nasaImagesState = MutableStateFlow<NasaImagesState>(NasaImagesState.Initial)
     val nasaImagesState = _nasaImagesState.asStateFlow()
 
-    private val _effect = MutableSharedFlow<SearchEffect>()
+    private val _effect = MutableSharedFlow<SearchEffect>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     val effect = _effect.asSharedFlow()
 
     init {
@@ -67,11 +73,24 @@ class SearchViewModel @Inject constructor(
 
         _nasaImagesState.value = NasaImagesState.Loading
 
+        val cachedData = cacheManager.get(startDate, endDate)
+        if (cachedData != null) {
+            _nasaImagesState.value = NasaImagesState.Success(cachedData)
+            viewModelScope.launch {
+                _effect.emit(SearchEffect.ShowToast(resourceProvider.getString(R.string.from_cache)))
+            }
+            return
+        }
+
         viewModelScope.launch {
+            _effect.emit(SearchEffect.ShowToast(resourceProvider.getString(R.string.from_api)))
             runCatching {
                 getNasaImagesUseCase(startDate, endDate)
             }.fold(
-                onSuccess = { nasaImages -> _nasaImagesState.value = NasaImagesState.Success(nasaImages) },
+                onSuccess = {
+                    nasaImages -> _nasaImagesState.value = NasaImagesState.Success(nasaImages)
+                    cacheManager.put(startDate, endDate, nasaImages)
+                },
                 onFailure = { e -> _nasaImagesState.value = handleError(e) }
             )
         }

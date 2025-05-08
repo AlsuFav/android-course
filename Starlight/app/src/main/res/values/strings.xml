@@ -40,4 +40,8 @@
     <string name="error_dates_after">Dates should not be after </string>
     <string name="error_title">Error</string>
 
+
+    <string name="from_cache">Data from cache</string>
+    <string name="from_api">Data from api</string>
+
 </resources>

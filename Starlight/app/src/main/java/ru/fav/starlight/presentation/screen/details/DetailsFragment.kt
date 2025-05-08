@@ -14,13 +14,16 @@ import ru.fav.starlight.presentation.util.ErrorDialogUtil
 import ru.fav.starlight.presentation.util.observe
 import kotlin.getValue
 import android.graphics.drawable.Drawable
+import android.widget.Toast
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import dev.androidbroadcast.vbpd.viewBinding
+import ru.fav.starlight.presentation.screen.details.state.DetailsEffect
 import ru.fav.starlight.presentation.screen.details.state.DetailsEvent
 import ru.fav.starlight.presentation.screen.details.state.NasaImageDetailsState
+import ru.fav.starlight.presentation.util.observeNotSuspend
 
 @AndroidEntryPoint
 class DetailsFragment: Fragment(R.layout.fragment_details) {
@@ -46,6 +49,12 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
     }
 
     private fun observeViewModel() {
+        detailsViewModel.effect.observeNotSuspend(viewLifecycleOwner) { state ->
+            when (state) {
+                is DetailsEffect.ShowToast -> showToast(state.message)
+            }
+        }
+
         detailsViewModel.nasaImageDetailsState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is NasaImageDetailsState.Loading -> {
@@ -138,6 +147,11 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
             }
         }
     }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
     }

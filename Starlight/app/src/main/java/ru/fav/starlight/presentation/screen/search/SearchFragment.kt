@@ -5,6 +5,7 @@ import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import dagger.hilt.android.AndroidEntryPoint
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.fav.starlight.R
@@ -66,6 +67,7 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
         searchViewModel.effect.observeNotSuspend(viewLifecycleOwner) { state ->
             when (state) {
                 is SearchEffect.ShowDatePicker -> showDatePicker(state.type, state.maxDateMillis)
+                is SearchEffect.ShowToast -> showToast(state.message)
             }
         }
 
@@ -148,6 +150,10 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
             text = message
             visibility = View.VISIBLE
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun hideErrorField() {
