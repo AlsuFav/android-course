@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,21 +18,20 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.fav.starlight.presentation.screen.details.state.DetailsEvent
 import ru.fav.starlight.presentation.screen.details.state.NasaImageDetailsState
-import ru.fav.starlight.presentation.screen.profile.state.ProfileEvent
 
 @AndroidEntryPoint
 class DetailsFragment: Fragment(R.layout.fragment_details) {
 
-    private var viewBinding: FragmentDetailsBinding? = null
+    private val viewBinding: FragmentDetailsBinding by viewBinding(FragmentDetailsBinding::bind)
 
     private val detailsViewModel: DetailsViewModel by viewModels()
     private val args: DetailsFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding = FragmentDetailsBinding.bind(view)
 
         initViews()
         observeViewModel()
@@ -42,7 +40,7 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
     }
 
     private fun initViews() = with(viewBinding) {
-        this?.buttonBack?.setOnClickListener {
+        this.buttonBack.setOnClickListener {
             detailsViewModel.reduce(event = DetailsEvent.OnBackClicked)
         }
     }
@@ -71,7 +69,7 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
     }
 
     private fun loadNasaImage(nasaImage: NasaImageDetailsModel) = with(viewBinding) {
-        this?.apply {
+        this.apply {
             textViewNasaImageTitle.text = nasaImage.title
             textViewNasaImageDate.text = nasaImage.date
             textViewNasaImageExplanation.text = nasaImage.explanation
@@ -116,7 +114,7 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
 
 
     private fun showLoading(isLoading: Boolean) {
-        viewBinding?.apply {
+        viewBinding.apply {
             if (isLoading) {
                 shimmerImageLayout.visibility = View.VISIBLE
                 shimmerTextLayout.visibility = View.VISIBLE
@@ -142,6 +140,5 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
     }
     override fun onDestroy() {
         super.onDestroy()
-        viewBinding = null
     }
 }

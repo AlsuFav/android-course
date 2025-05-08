@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.fav.starlight.R
 import ru.fav.starlight.databinding.FragmentAuthorizationBinding
 import ru.fav.starlight.presentation.screen.authorization.state.AuthorizationEvent
@@ -15,20 +16,20 @@ import ru.fav.starlight.presentation.util.observe
 @AndroidEntryPoint
 class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
 
-    private var viewBinding: FragmentAuthorizationBinding? = null
+    private val viewBinding: FragmentAuthorizationBinding by viewBinding(
+        FragmentAuthorizationBinding::bind)
 
     private val authorizationViewModel: AuthorizationViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding = FragmentAuthorizationBinding.bind(view)
         initViews()
         observeViewModel()
     }
 
     private fun initViews() = with(viewBinding) {
 
-        this?.buttonSignIn?.setOnClickListener {
+        this.buttonSignIn.setOnClickListener {
             val apiKey = this.editTextApiKey.text.toString().trim()
             authorizationViewModel.reduce(event = AuthorizationEvent.OnSignInClicked(apiKey))
         }
@@ -67,22 +68,21 @@ class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        viewBinding?.buttonSignIn?.isEnabled = !isLoading
+        viewBinding.buttonSignIn.isEnabled = !isLoading
     }
 
     private fun showFieldError(message: String) {
-        viewBinding?.textError?.apply {
+        viewBinding.textError.apply {
             text = message
             visibility = View.VISIBLE
         }
     }
 
     private fun hideFieldError() {
-        viewBinding?.textError?.visibility = View.GONE
+        viewBinding.textError.visibility = View.GONE
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewBinding = null
     }
 }

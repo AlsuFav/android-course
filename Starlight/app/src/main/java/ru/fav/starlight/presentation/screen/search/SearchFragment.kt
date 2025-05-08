@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.fav.starlight.R
 import ru.fav.starlight.databinding.FragmentSearchBinding
 import ru.fav.starlight.presentation.screen.search.adapter.NasaImagesAdapter
@@ -23,7 +24,7 @@ import java.util.Calendar
 @AndroidEntryPoint
 class SearchFragment: Fragment(R.layout.fragment_search) {
 
-    private var viewBinding: FragmentSearchBinding? = null
+    private val viewBinding: FragmentSearchBinding by viewBinding(FragmentSearchBinding::bind)
     private var rvAdapter: NasaImagesAdapter? = null
     private var rvShimmerAdapter: NasaImagesShimmerAdapter? = null
 
@@ -31,7 +32,6 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding = FragmentSearchBinding.bind(view)
 
         initViews()
         observeViewModel()
@@ -40,10 +40,10 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
     private fun initViews() = with(viewBinding) {
         setupRecyclerViews()
 
-        this?.editTextStartDate?.setOnClickListener { searchViewModel.reduce(SearchEvent.OnStartDateClicked) }
-        this?.editTextEndDate?.setOnClickListener { searchViewModel.reduce(SearchEvent.OnEndDateClicked) }
+        this.editTextStartDate.setOnClickListener { searchViewModel.reduce(SearchEvent.OnStartDateClicked) }
+        this.editTextEndDate.setOnClickListener { searchViewModel.reduce(SearchEvent.OnEndDateClicked) }
 
-        this?.buttonFetchImages?.setOnClickListener {
+        this.buttonFetchImages.setOnClickListener {
             val startDate = this.editTextStartDate.text.toString()
             val endDate = this.editTextEndDate.text.toString()
 
@@ -54,7 +54,7 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
 
     private fun observeViewModel() {
         searchViewModel.searchDatesState.observeNotSuspend(viewLifecycleOwner) { state ->
-            viewBinding?.apply {
+            viewBinding.apply {
                 editTextStartDate.setText(state.startDate)
                 editTextEndDate.setText(state.endDate)
             }
@@ -102,10 +102,10 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
         rvAdapter = NasaImagesAdapter { nasaImage ->
             searchViewModel.reduce(SearchEvent.OnNasaImageClicked(nasaImage.date))
         }
-        viewBinding?.recyclerViewNasaImages?.adapter = rvAdapter
+        viewBinding.recyclerViewNasaImages.adapter = rvAdapter
 
         rvShimmerAdapter = NasaImagesShimmerAdapter()
-        viewBinding?.recyclerViewShimmer?.adapter = rvShimmerAdapter
+        viewBinding.recyclerViewShimmer.adapter = rvShimmerAdapter
     }
 
     private fun showDatePicker(dateType: DateType, maxDateMillis: Long) {
@@ -125,9 +125,9 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        viewBinding?.buttonFetchImages?.isEnabled = !isLoading
+        viewBinding.buttonFetchImages.isEnabled = !isLoading
 
-        viewBinding?.apply {
+        viewBinding.apply {
             if (isLoading) {
                 shimmerLayout.visibility = View.VISIBLE
                 shimmerLayout.startShimmer()
@@ -141,19 +141,18 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
     }
 
     private fun showErrorField(message: String) {
-        viewBinding?.textError?.apply {
+        viewBinding.textError.apply {
             text = message
             visibility = View.VISIBLE
         }
     }
 
     private fun hideErrorField() {
-        viewBinding?.textError?.visibility = View.GONE
+        viewBinding.textError.visibility = View.GONE
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewBinding?.shimmerLayout?.stopShimmer()
-        viewBinding = null
+        viewBinding.shimmerLayout.stopShimmer()
     }
 }

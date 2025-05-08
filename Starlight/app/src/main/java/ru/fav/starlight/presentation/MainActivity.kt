@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.fav.starlight.R
 import ru.fav.starlight.databinding.ActivityMainBinding
 import ru.fav.starlight.presentation.navigation.Nav
@@ -21,13 +22,12 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
     @Inject
     lateinit var nav: Nav
 
-    private var viewBinding: ActivityMainBinding? = null
+    private val viewBinding by viewBinding(ActivityMainBinding::bind)
     private var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(viewBinding?.root)
+        setContentView(R.layout.activity_main)
 
         setupSystemWindowInsets()
         setupNavigation()
@@ -66,9 +66,11 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
     }
 
     private fun setupBottomNavigation() {
-        viewBinding?.mainBottomNavigation?.setupWithNavController(navController!!)
+        navController?.let {
+            viewBinding.mainBottomNavigation.setupWithNavController(it)
+        }
 
-        viewBinding?.mainBottomNavigation?.setOnItemSelectedListener { item ->
+        viewBinding.mainBottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_search_tab -> {
                     (nav as? NavMain)?.goToSearchPage()
@@ -84,11 +86,11 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
     }
 
     private fun showBottomNavigation() {
-        viewBinding?.mainBottomNavigation?.visibility = View.VISIBLE
+        viewBinding.mainBottomNavigation.visibility = View.VISIBLE
     }
 
     private fun hideBottomNavigation() {
-        viewBinding?.mainBottomNavigation?.visibility = View.GONE
+        viewBinding.mainBottomNavigation.visibility = View.GONE
     }
 
     override fun getNavController(): NavController? {
@@ -96,8 +98,9 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
     }
 
     override fun onDestroy() {
-        nav.clearNavProvider(this)
-        viewBinding = null
         super.onDestroy()
+        if (this::nav.isInitialized) {
+            nav.clearNavProvider(navProvider = this)
+        }
     }
 }

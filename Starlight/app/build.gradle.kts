@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
 
+    implementation(libs.viewbinding.property.delegate)
     implementation(libs.glide)
     implementation(libs.shimmer)
 }

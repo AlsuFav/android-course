@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.fav.starlight.R
 import ru.fav.starlight.databinding.FragmentProfileBinding
 import ru.fav.starlight.presentation.screen.profile.state.ClearApiKeyState
@@ -19,26 +20,25 @@ import kotlin.getValue
 @AndroidEntryPoint
 class ProfileFragment: Fragment(R.layout.fragment_profile) {
 
-    private var viewBinding: FragmentProfileBinding? = null
+    private val viewBinding: FragmentProfileBinding by viewBinding(FragmentProfileBinding::bind)
 
     private val profileViewModel: ProfileViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding = FragmentProfileBinding.bind(view)
         initViews()
         observeViewModel()
     }
 
     private fun initViews() = with(viewBinding) {
 
-        this?.buttonUpdateApiKey?.setOnClickListener {
+        this.buttonUpdateApiKey.setOnClickListener {
             val apiKey = this.editTextApiKey.text.toString().trim()
             profileViewModel.reduce(event = ProfileEvent.OnUpdateApiKeyClicked(apiKey))
             hideKeyboard()
         }
 
-        this?.buttonLogOut?.setOnClickListener {
+        this.buttonLogOut.setOnClickListener {
             profileViewModel.reduce(event = ProfileEvent.OnLogOutClicked)
         }
     }
@@ -104,22 +104,22 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
     }
 
     private fun showUpdateButtonLoading(isLoading: Boolean) {
-        viewBinding?.buttonUpdateApiKey?.isEnabled = !isLoading
+        viewBinding.buttonUpdateApiKey.isEnabled = !isLoading
     }
 
     private fun showLogOutButtonLoading(isLoading: Boolean) {
-        viewBinding?.buttonLogOut?.isEnabled = !isLoading
+        viewBinding.buttonLogOut.isEnabled = !isLoading
     }
 
     private fun showFieldError(message: String) {
-        viewBinding?.textError?.apply {
+        viewBinding.textError.apply {
             text = message
             visibility = View.VISIBLE
         }
     }
 
     private fun hideFieldError() {
-        viewBinding?.textError?.visibility = View.GONE
+        viewBinding.textError.visibility = View.GONE
     }
 
     private fun showToast(message: String) {
@@ -128,6 +128,5 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewBinding = null
     }
 }
