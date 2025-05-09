@@ -148,7 +148,17 @@ class SearchViewModel @Inject constructor(
 
     private fun showDatePicker(type: DateType) {
         viewModelScope.launch {
-            _effect.emit(SearchEffect.ShowDatePicker(type, dateProvider.getCurrentDate().timeInMillis))
+            val currentDateString = when (type) {
+                DateType.START -> _searchDatesState.value.startDate
+                DateType.END -> _searchDatesState.value.endDate
+            }
+            val initialCalendar = dateProvider.parseDate(currentDateString)
+
+            _effect.emit(SearchEffect.ShowDatePicker(
+                type = type,
+                maxDateMillis = dateProvider.getCurrentDate().timeInMillis,
+                initialDate = initialCalendar
+            ))
         }
     }
 

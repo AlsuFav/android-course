@@ -66,7 +66,11 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
 
         searchViewModel.effect.observeNotSuspend(viewLifecycleOwner) { state ->
             when (state) {
-                is SearchEffect.ShowDatePicker -> showDatePicker(state.type, state.maxDateMillis)
+                is SearchEffect.ShowDatePicker -> showDatePicker(
+                    state.type,
+                    state.maxDateMillis,
+                    state.initialDate
+                )
                 is SearchEffect.ShowToast -> showToast(state.message)
             }
         }
@@ -113,16 +117,16 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
         viewBinding.recyclerViewShimmer.adapter = rvShimmerAdapter
     }
 
-    private fun showDatePicker(dateType: DateType, maxDateMillis: Long) {
+    private fun showDatePicker(dateType: DateType, maxDateMillis: Long, initialDate: Calendar) {
         DatePickerDialog(
             requireContext(),
             { _, year, month, day ->
                 val selectedDate = Calendar.getInstance().apply { set(year, month, day) }
                 searchViewModel.reduce(SearchEvent.OnDateSelected(dateType, selectedDate))
             },
-            Calendar.getInstance().get(Calendar.YEAR),
-            Calendar.getInstance().get(Calendar.MONTH),
-            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+            initialDate.get(Calendar.YEAR),
+            initialDate.get(Calendar.MONTH),
+            initialDate.get(Calendar.DAY_OF_MONTH)
         ).apply {
             datePicker.maxDate = maxDateMillis
             show()
