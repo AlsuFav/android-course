@@ -4,6 +4,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id ("com.google.dagger.hilt.android")
+    alias(libs.plugins.detekt)
 }
 
 android {
@@ -42,6 +43,16 @@ android {
     buildFeatures {
         buildConfig = true
     }
+}
+
+detekt {
+    toolVersion = libs.versions.detekt.get()
+    config.setFrom(files("$rootDir/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    jvmTarget = "11"
 }
 
 dependencies {

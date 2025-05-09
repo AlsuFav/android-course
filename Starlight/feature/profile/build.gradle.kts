@@ -4,6 +4,7 @@ plugins {
     id("com.google.devtools.ksp")
     id ("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.detekt)
 }
 
 android {
@@ -36,6 +37,16 @@ android {
     buildFeatures {
         viewBinding = true
     }
+}
+
+detekt {
+    toolVersion = libs.versions.detekt.get()
+    config.setFrom(files("$rootDir/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    jvmTarget = "11"
 }
 
 dependencies {
