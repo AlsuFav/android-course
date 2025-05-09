@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_details"
+    app:startDestination="@id/destination_details">
+
+    <fragment
+        android:id="@+id/destination_details"
+        android:name="ru.fav.starlight.details.ui.DetailsFragment"
+        android:label="Details">
+
+    <argument
+        android:name="date"
+        app:argType="string"/>
+    </fragment>
+</navigation>
