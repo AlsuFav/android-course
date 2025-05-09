@@ -8,4 +8,11 @@ plugins {
     id ("com.google.dagger.hilt.android") version "2.56" apply false
     id ("androidx.navigation.safeargs.kotlin") version "2.7.7" apply false
     alias(libs.plugins.detekt)
+    alias(libs.plugins.android.library) apply false
 }
+
+private val versionMajor = 1
+private val versionMinor = 0
+
+val versionName by extra(initialValue = "$versionMajor.$versionMinor")
+val versionCode by extra(initialValue = versionMajor * 1000 + versionMinor * 10)

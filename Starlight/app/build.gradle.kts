@@ -1,32 +1,24 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
-    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id ("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.detekt)
 }
 
 android {
-    namespace = "ru.fav.starlight"
-    compileSdk = 35
+    namespace = "ru.fav.starlight.app"
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "ru.fav.starlight"
-        minSdk = 24
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = rootProject.extra.get("versionCode") as Int
+        versionName = rootProject.extra.get("versionName") as String
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField(
-            "String",
-            "NASA_BASE_URL",
-            "\"https://api.nasa.gov/\""
-        )
     }
 
     buildTypes {
@@ -45,13 +37,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.13"
-    }
+
     buildFeatures {
         viewBinding = true
-        compose = true
-        buildConfig = true
     }
 }
 
@@ -67,34 +55,30 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
 
 dependencies {
 
+    implementation(project(path = ":core:presentation"))
+    implementation(project(path = ":core:data"))
+    implementation(project(path = ":core:domain"))
+    implementation(project(path = ":core:navigation"))
+    implementation(project(path = ":core:network"))
+    implementation(project(path = ":core:util"))
+
+    implementation(project(path = ":feature:splash"))
+    implementation(project(path = ":feature:authorization"))
+    implementation(project(path = ":feature:search"))
+    implementation(project(path = ":feature:profile"))
+    implementation(project(path = ":feature:details"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.activity)
+    androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.fragment)
-    implementation(libs.androidx.constraintlayout)
+    implementation(libs.lifecycle.viewmodel)
+
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
-    implementation(libs.androidx.junit.ktx)
-    implementation(libs.androidx.datastore.preferences)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.bundles.compose.base)
-    implementation(libs.compose.lifecycle)
-    implementation(libs.compose.icons.extended)
-    implementation(libs.coroutines.android)
-
-    implementation (libs.retrofit)
-    implementation(libs.retrofit.gson.converter)
-    implementation (libs.gson)
-    implementation(libs.http.logging.interceptor)
-    implementation (libs.okhttp)
 
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
-
     implementation(libs.viewbinding.property.delegate)
-    implementation(libs.glide)
-    implementation(libs.shimmer)
 }

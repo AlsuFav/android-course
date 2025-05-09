@@ -1,4 +1,8 @@
 [versions]
+minSdk = "24"
+targetSdk = "35"
+compileSdk = "35"
+
 agp = "8.9.0"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
@@ -37,6 +41,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-fragment = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
+lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle-version" }
 androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
@@ -61,9 +66,11 @@ viewbinding-property-delegate = { group = "dev.androidbroadcast.vbpd", name = "v
 [bundles]
 compose-base = [ "compose-foundation", "compose-ui", "compose-material", "compose-icons-extended" ]
 coroutines = ["coroutines-core", "coroutines-android"]
+network-deps = ["retrofit", "retrofit-gson-converter", "okhttp", "gson"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+android-library = { id = "com.android.library", version.ref = "agp" }

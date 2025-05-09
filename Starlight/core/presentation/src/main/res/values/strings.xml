@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Starlight</string>
+
+    <string name="starlight_logo">Starlight logo</string>
+
+    <string name="search">Search</string>
+    <string name="profile">Profile</string>
+
+    <string name="back">Back</string>
+    <string name="ok">OK</string>
+
+    <string name="error_fill_field">Please fill the field</string>
+    <string name="error_forbidden_access">The access is forbidden</string>
+    <string name="error_network">No internet connection</string>
+    <string name="error_server">Server error</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_title">Error</string>
+
+</resources>
