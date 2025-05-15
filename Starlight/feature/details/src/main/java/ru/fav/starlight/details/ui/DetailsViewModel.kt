@@ -71,7 +71,7 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    private fun handleError(throwable: Throwable): NasaImageDetailsState.Error {
+    private suspend fun handleError(throwable: Throwable): NasaImageDetailsState.Error {
         val errorMessage = when (throwable) {
             is ForbiddenAccessException ->
                 throwable.message ?: resourceProvider
@@ -83,7 +83,9 @@ class DetailsViewModel @Inject constructor(
             else -> resourceProvider
                 .getString(ru.fav.starlight.presentation.R.string.error_unknown)
         }
-        return NasaImageDetailsState.Error(errorMessage)
+
+        _effect.emit(DetailsEffect.ShowErrorDialog(errorMessage))
+        return NasaImageDetailsState.Error
     }
 
     private fun navigateBack() {

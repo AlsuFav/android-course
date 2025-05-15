@@ -7,6 +7,7 @@ sealed class SearchEffect {
         val type: DateType,
         val maxDateMillis: Long,
         val initialDate: Calendar
-        ) : SearchEffect()
+    ) : SearchEffect()
     data class ShowToast(val message: String) : SearchEffect()
+    data class ShowErrorDialog(val message: String) : SearchEffect()
 }

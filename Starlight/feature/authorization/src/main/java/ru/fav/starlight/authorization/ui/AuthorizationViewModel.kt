@@ -3,9 +3,13 @@ package ru.fav.starlight.authorization.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ru.fav.starlight.authorization.ui.state.AuthorizationEffect
 import ru.fav.starlight.authorization.ui.state.AuthorizationEvent
 import ru.fav.starlight.authorization.ui.state.AuthorizationState
 import ru.fav.starlight.domain.provider.ResourceProvider
@@ -23,6 +27,12 @@ class AuthorizationViewModel @Inject constructor(
 
     private val _authorizationState = MutableStateFlow<AuthorizationState>(AuthorizationState.Initial)
     val authorizationState = _authorizationState.asStateFlow()
+
+    private val _effect = MutableSharedFlow<AuthorizationEffect>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val effect = _effect.asSharedFlow()
 
     fun reduce(event: AuthorizationEvent) {
         when (event) {
@@ -58,8 +68,9 @@ class AuthorizationViewModel @Inject constructor(
         }
     }
 
-    private fun handleError(): AuthorizationState.Error {
-        return AuthorizationState.Error.GlobalError(resourceProvider.getString(R.string.error_unknown))
+    private suspend fun handleError(): AuthorizationState.Error {
+        _effect.emit(AuthorizationEffect.ShowErrorDialog(resourceProvider.getString(R.string.error_unknown)))
+        return AuthorizationState.Error.GlobalError
     }
 
     private fun navigateToProfile() {

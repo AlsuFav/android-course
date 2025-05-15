@@ -5,5 +5,5 @@ sealed class ClearApiKeyState {
     object Loading : ClearApiKeyState()
     object Success : ClearApiKeyState()
 
-    data class Error(val message: String) : ClearApiKeyState()
+    object Error : ClearApiKeyState()
 }

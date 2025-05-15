@@ -6,6 +6,6 @@ sealed class SplashState {
 
     sealed class Error : SplashState() {
         object NoApiKey : Error()
-        data class GlobalError(val message: String) : Error()
+        object GlobalError : Error()
     }
 }

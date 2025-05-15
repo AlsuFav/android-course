@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.Toast
 import dagger.hilt.android.AndroidEntryPoint
 import dev.androidbroadcast.vbpd.viewBinding
-import ru.fav.starlight.presentation.util.ErrorDialogUtil
 import ru.fav.starlight.search.R
 import ru.fav.starlight.search.databinding.FragmentSearchBinding
 import ru.fav.starlight.search.ui.adapter.NasaImagesAdapter
@@ -19,6 +18,7 @@ import ru.fav.starlight.search.ui.state.SearchEffect
 import ru.fav.starlight.search.ui.state.SearchEvent
 import ru.fav.starlight.utils.extensions.observe
 import ru.fav.starlight.utils.extensions.observeNotSuspend
+import ru.fav.starlight.utils.extensions.showErrorDialog
 import java.util.Calendar
 
 @AndroidEntryPoint
@@ -72,6 +72,7 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
                     state.initialDate
                 )
                 is SearchEffect.ShowToast -> showToast(state.message)
+                is SearchEffect.ShowErrorDialog -> showErrorDialog(state.message)
             }
         }
 
@@ -97,11 +98,6 @@ class SearchFragment: Fragment(R.layout.fragment_search) {
                 }
                 is NasaImagesState.Error.GlobalError -> {
                     showLoading(false)
-
-                    ErrorDialogUtil.showErrorDialog(
-                        context = requireContext(),
-                        message = state.message
-                    )
                 }
             }
         }

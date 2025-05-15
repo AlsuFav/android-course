@@ -63,9 +63,12 @@ class ProfileViewModel @Inject constructor(
                     _updateApiKeyState.value = UpdateApiKeyState.Success
                     _effect.emit(ProfileEffect.ShowToast(resourceProvider.getString(R.string.api_key_updated)))
                 },
-                onFailure = { _updateApiKeyState.value =
-                    UpdateApiKeyState.Error.GlobalError(resourceProvider
-                        .getString(ru.fav.starlight.presentation.R.string.error_unknown)) }
+                onFailure = {
+                    _effect.emit(ProfileEffect.ShowErrorDialog(
+                        resourceProvider.getString(ru.fav.starlight.presentation.R.string.error_unknown)
+                    ))
+                    _updateApiKeyState.value = UpdateApiKeyState.Error.GlobalError
+                }
             )
         }
     }
@@ -81,9 +84,11 @@ class ProfileViewModel @Inject constructor(
                     _clearApiKeyState.value = ClearApiKeyState.Success
                     navigateToAuthorization()
                 },
-                onFailure = { _clearApiKeyState.value =
-                    ClearApiKeyState.Error(resourceProvider.getString(
-                        ru.fav.starlight.presentation.R.string.error_unknown)) }
+                onFailure = {
+                    _effect.emit(ProfileEffect.ShowErrorDialog(
+                        resourceProvider.getString(ru.fav.starlight.presentation.R.string.error_unknown)
+                    ))
+                    _clearApiKeyState.value = ClearApiKeyState.Error }
             )
         }
     }
@@ -91,7 +96,8 @@ class ProfileViewModel @Inject constructor(
     private fun validateInput(apiKey: String): String? {
         return when {
             apiKey.isEmpty() -> resourceProvider.getString(
-                ru.fav.starlight.presentation.R.string.error_fill_field)
+                ru.fav.starlight.presentation.R.string.error_fill_field
+            )
             else -> null
         }
     }

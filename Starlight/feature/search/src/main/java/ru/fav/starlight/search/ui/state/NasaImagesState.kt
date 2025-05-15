@@ -9,6 +9,6 @@ sealed class NasaImagesState {
 
     sealed class Error : NasaImagesState() {
         data class FieldError(val message: String) : Error()
-        data class GlobalError(val message: String) : Error()
+        object GlobalError : Error()
     }
 }

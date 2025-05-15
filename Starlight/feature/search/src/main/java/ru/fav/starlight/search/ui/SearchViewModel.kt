@@ -110,7 +110,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun handleError(throwable: Throwable): NasaImagesState.Error.GlobalError {
+    private suspend fun handleError(throwable: Throwable): NasaImagesState.Error.GlobalError {
         val errorMessage = when (throwable) {
             is ForbiddenAccessException ->
                 throwable.message ?: resourceProvider
@@ -122,7 +122,9 @@ class SearchViewModel @Inject constructor(
             else -> resourceProvider
                 .getString(ru.fav.starlight.presentation.R.string.error_unknown)
         }
-        return NasaImagesState.Error.GlobalError(errorMessage)
+        _effect.emit(SearchEffect.ShowErrorDialog(errorMessage))
+
+        return NasaImagesState.Error.GlobalError
     }
 
     private fun loadInitialDates() {

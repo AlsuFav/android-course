@@ -7,6 +7,6 @@ sealed class UpdateApiKeyState {
 
     sealed class Error : UpdateApiKeyState() {
         data class FieldError(val message: String) : Error()
-        data class GlobalError(val message: String) : Error()
+        object GlobalError : Error()
     }
 }

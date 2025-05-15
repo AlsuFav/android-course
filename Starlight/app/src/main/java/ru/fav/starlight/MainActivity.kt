@@ -72,11 +72,11 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
 
         viewBinding.mainBottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.menu_search_tab -> {
+                R.id.nav_search -> {
                     (nav as? NavMain)?.goToSearchPage()
                     true
                 }
-                R.id.menu_profile_tab -> {
+                R.id.nav_profile -> {
                     (nav as? NavMain)?.goToProfilePage()
                     true
                 }
