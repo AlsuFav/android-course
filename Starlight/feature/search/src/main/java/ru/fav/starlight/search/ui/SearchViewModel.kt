@@ -3,7 +3,6 @@ package ru.fav.starlight.search.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,10 +20,9 @@ import ru.fav.starlight.domain.provider.ResourceProvider
 import ru.fav.starlight.domain.usecase.GetNasaImagesUseCase
 import ru.fav.starlight.navigation.NavMain
 import ru.fav.starlight.search.ui.state.DateType
-import ru.fav.starlight.search.ui.state.NasaImagesState
-import ru.fav.starlight.search.ui.state.SearchDatesState
 import ru.fav.starlight.search.ui.state.SearchEffect
 import ru.fav.starlight.search.ui.state.SearchEvent
+import ru.fav.starlight.search.ui.state.SearchState
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -37,16 +35,11 @@ class SearchViewModel @Inject constructor(
     private val navMain: NavMain,
 ) : ViewModel() {
 
-    private val _searchDatesState = MutableStateFlow(SearchDatesState())
-    val searchDatesState: StateFlow<SearchDatesState> = _searchDatesState.asStateFlow()
+    private val _state = MutableStateFlow(SearchState())
+    val state: StateFlow<SearchState> = _state.asStateFlow()
 
-    private val _nasaImagesState = MutableStateFlow<NasaImagesState>(NasaImagesState.Initial)
-    val nasaImagesState = _nasaImagesState.asStateFlow()
 
-    private val _effect = MutableSharedFlow<SearchEffect>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private val _effect = MutableSharedFlow<SearchEffect>()
     val effect = _effect.asSharedFlow()
 
     init {
@@ -56,26 +49,35 @@ class SearchViewModel @Inject constructor(
     fun reduce(event: SearchEvent) {
         when (event) {
             is SearchEvent.LoadInitialData -> loadInitialDates()
-            is SearchEvent.LoadCurrentTimeMillis -> getCurrentTimeMillis()
             is SearchEvent.OnFetchImagesClicked -> loadNasaImages(event.startDate, event.endDate)
             is SearchEvent.OnStartDateClicked -> showDatePicker(DateType.START)
             is SearchEvent.OnEndDateClicked -> showDatePicker(DateType.END)
             is SearchEvent.OnDateSelected -> onDateSelected(event.type, event.calendar)
             is SearchEvent.OnNasaImageClicked -> navigateToDetails(event.date)
+            SearchEvent.OnErrorDialogDismissed -> dismissErrorDialog()
         }
+    }
+
+    private fun dismissErrorDialog() {
+        _state.update { it.copy(globalError = "") }
     }
 
     private fun loadNasaImages(startDate: String, endDate: String) {
         validateInputs(startDate, endDate)?.let { errorMessage ->
-            _nasaImagesState.value = NasaImagesState.Error.FieldError(errorMessage)
+            _state.update { it.copy(fieldError = errorMessage) }
             return
         }
 
-        _nasaImagesState.value = NasaImagesState.Loading
+        _state.update { it.copy(isLoading = true, fieldError = "") }
 
         val cachedData = cacheManager.get(startDate, endDate)
         if (cachedData != null) {
-            _nasaImagesState.value = NasaImagesState.Success(cachedData)
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    nasaImages = cachedData
+                )
+            }
             viewModelScope.launch {
                 _effect.emit(SearchEffect.ShowToast(resourceProvider.getString(R.string.from_cache)))
             }
@@ -88,10 +90,16 @@ class SearchViewModel @Inject constructor(
                 getNasaImagesUseCase(startDate, endDate)
             }.fold(
                 onSuccess = {
-                    nasaImages -> _nasaImagesState.value = NasaImagesState.Success(nasaImages)
+                    nasaImages ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            nasaImages = nasaImages,
+                        )
+                    }
                     cacheManager.put(startDate, endDate, nasaImages)
                 },
-                onFailure = { e -> _nasaImagesState.value = handleError(e) }
+                onFailure = { e -> handleError(e) }
             )
         }
     }
@@ -110,7 +118,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handleError(throwable: Throwable): NasaImagesState.Error.GlobalError {
+    private suspend fun handleError(throwable: Throwable) {
         val errorMessage = when (throwable) {
             is ForbiddenAccessException ->
                 throwable.message ?: resourceProvider
@@ -122,15 +130,18 @@ class SearchViewModel @Inject constructor(
             else -> resourceProvider
                 .getString(ru.fav.starlight.presentation.R.string.error_unknown)
         }
-        _effect.emit(SearchEffect.ShowErrorDialog(errorMessage))
-
-        return NasaImagesState.Error.GlobalError
+        _state.update {
+            it.copy(
+                isLoading = false,
+                globalError = errorMessage
+            )
+        }
     }
 
     private fun loadInitialDates() {
         val currentDate = dateProvider.getCurrentDate()
         val formattedCurrentDate = dateProvider.formatDate(currentDate)
-        _searchDatesState.update {
+        _state.update {
             it.copy(
                 startDate = formattedCurrentDate,
                 endDate = formattedCurrentDate
@@ -140,10 +151,15 @@ class SearchViewModel @Inject constructor(
 
     private fun onDateSelected(dateType: DateType, calendar: Calendar) {
         val date = dateProvider.formatDate(calendar)
-        _searchDatesState.update { state ->
+        _state.update { state ->
             when(dateType) {
-                DateType.START -> state.copy(startDate = date)
-                DateType.END -> state.copy(endDate = date)
+                DateType.START ->
+                    state.copy(
+                    isLoading = false,
+                    startDate = date)
+                DateType.END -> state.copy(
+                    isLoading = false,
+                    endDate = date)
             }
         }
     }
@@ -151,20 +167,23 @@ class SearchViewModel @Inject constructor(
     private fun showDatePicker(type: DateType) {
         viewModelScope.launch {
             val currentDateString = when (type) {
-                DateType.START -> _searchDatesState.value.startDate
-                DateType.END -> _searchDatesState.value.endDate
+                DateType.START -> _state.value.startDate
+                DateType.END -> _state.value.endDate
             }
             val initialCalendar = dateProvider.parseDate(currentDateString)
+
+            val minDateCalendar = Calendar.getInstance().apply {
+                set(1995, Calendar.JUNE, 16)
+            }
 
             _effect.emit(SearchEffect.ShowDatePicker(
                 type = type,
                 maxDateMillis = dateProvider.getCurrentDate().timeInMillis,
+                minDateMillis = minDateCalendar.timeInMillis,
                 initialDate = initialCalendar
             ))
         }
     }
-
-    private fun getCurrentTimeMillis(): Long = dateProvider.getCurrentDate().timeInMillis
 
     private fun navigateToDetails(date: String) {
         navMain.goToDetailsPage(date)

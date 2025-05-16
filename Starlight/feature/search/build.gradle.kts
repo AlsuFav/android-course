@@ -5,6 +5,7 @@ plugins {
     id ("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.detekt)
+    alias(libs.plugins.compose.compiler.plugin)
 }
 
 android {
@@ -72,5 +73,7 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
-    implementation(libs.viewbinding.property.delegate)
+
+    implementation(libs.bundles.coil)
+    implementation(libs.bundles.compose)
 }
