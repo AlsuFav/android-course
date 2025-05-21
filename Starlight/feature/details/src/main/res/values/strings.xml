@@ -1,0 +1,9 @@
+<resources>
+    <string name="nasa_image">NASA image</string>
+    <string name="nasa_image_date">NASA image date</string>
+    <string name="nasa_image_title">NASA image title</string>
+    <string name="nasa_image_explanation">NASA image explanation</string>
+
+    <string name="details_from_cache">Image details from cache</string>
+    <string name="details_from_api">Image details from api</string>
+</resources>
