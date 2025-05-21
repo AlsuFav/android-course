@@ -28,6 +28,8 @@ detekt = "1.23.8"
 
 compose = "1.8.0"
 composeMaterial3 = "1.2.1"
+junit = "4.13.2"
+junitVersion = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -59,6 +61,8 @@ compose-foundation = { group = "androidx.compose.foundation", name = "foundation
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "compose" }
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 
 [bundles]
 coil = ["coil", "coil-compose"]

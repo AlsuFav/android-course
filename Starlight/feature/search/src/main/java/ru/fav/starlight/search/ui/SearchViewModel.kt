@@ -38,7 +38,6 @@ class SearchViewModel @Inject constructor(
     private val _state = MutableStateFlow(SearchState())
     val state: StateFlow<SearchState> = _state.asStateFlow()
 
-
     private val _effect = MutableSharedFlow<SearchEffect>()
     val effect = _effect.asSharedFlow()
 
@@ -118,7 +117,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handleError(throwable: Throwable) {
+    private fun handleError(throwable: Throwable) {
         val errorMessage = when (throwable) {
             is ForbiddenAccessException ->
                 throwable.message ?: resourceProvider

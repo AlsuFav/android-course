@@ -35,4 +35,10 @@
         app:destination="@id/nav_details" />
 
     <include app:graph="@navigation/details_nav_graph" />
+
+    <action
+        android:id="@+id/action_global_graph"
+        app:destination="@id/nav_graph" />
+
+    <include app:graph="@navigation/graph_nav_graph" />
 </navigation>

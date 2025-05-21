@@ -27,10 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import ru.fav.starlight.search.R
 import ru.fav.starlight.search.ui.state.SearchEffect
 import java.util.Calendar
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import ru.fav.starlight.search.ui.component.DateInputField
 import ru.fav.starlight.search.ui.component.NasaImagesGrid
 import ru.fav.starlight.search.ui.component.ShimmerGrid
