@@ -41,19 +41,6 @@ class GraphFragment: Fragment(R.layout.fragment_graph) {
             }
         }
 
-        view.viewTreeObserver.addOnGlobalLayoutListener {
-            val rect = Rect()
-            view.getWindowVisibleDisplayFrame(rect)
-            val screenHeight = view.rootView.height
-            val keypadHeight = screenHeight - rect.bottom
-
-            if (keypadHeight > screenHeight * 0.15) { // Клавиатура открыта
-                view.setPadding(0, 0, 0, keypadHeight)
-            } else { // Клавиатура закрыта
-                view.setPadding(0, 0, 0, 0)
-            }
-        }
-
         (view as ViewGroup).addView(composeView)
     }
 
