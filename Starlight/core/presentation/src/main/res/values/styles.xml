@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.Starlight.Button.Squarish" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">8dp</item>
+
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:translationZ">0dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.Starlight.Button</item>
+    </style>
+
+    <style name="TextAppearance.Starlight.Button" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="roundedCorners" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+</resources>
