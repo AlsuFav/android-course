@@ -1,13 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    id("com.google.devtools.ksp")
-    id ("com.google.dagger.hilt.android")
     alias(libs.plugins.detekt)
 }
 
 android {
-    namespace = "ru.fav.starlight.data"
+    namespace = "ru.fav.starlight.notification"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -46,18 +44,5 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
 }
 
 dependencies {
-    implementation(project(path = ":core:network"))
-    implementation(project(path = ":core:domain"))
-
-    implementation (libs.retrofit)
-    implementation(libs.retrofit.gson.converter)
-    implementation (libs.gson)
-    implementation (libs.okhttp)
-
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
-
-    implementation(libs.firebase.remote.config)
-    implementation(libs.firebase.crashlytics)
+    implementation(libs.androidx.appcompat)
 }

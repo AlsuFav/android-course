@@ -2,14 +2,18 @@ package ru.fav.starlight
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.androidbroadcast.vbpd.viewBinding
+import kotlinx.coroutines.launch
 import ru.fav.starlight.app.R
 import ru.fav.starlight.app.databinding.ActivityMainBinding
 import ru.fav.starlight.navigation.Nav
@@ -22,6 +26,9 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
     @Inject
     lateinit var nav: Nav
 
+    @Inject
+    lateinit var appEventBus: AppEventBus
+
     private val viewBinding by viewBinding(ActivityMainBinding::bind)
     private var navController: NavController? = null
 
@@ -32,6 +39,8 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
         setupSystemWindowInsets()
         setupNavigation()
         setupBottomNavigation()
+
+        observeAppEvents()
     }
 
     private fun setupSystemWindowInsets() {
@@ -95,6 +104,50 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
 
     private fun hideBottomNavigation() {
         viewBinding.mainBottomNavigation.visibility = View.GONE
+    }
+
+    private fun observeAppEvents() {
+        lifecycleScope.launch {
+            appEventBus.events.collect { event ->
+                when (event) {
+                    is AppEvent.ConditionalFeatureRequest -> handleConditionalFeatureRequest(event)
+                }
+            }
+        }
+    }
+
+    private fun handleConditionalFeatureRequest(request: AppEvent.ConditionalFeatureRequest) {
+        if (!request.authorized) {
+            showToast(getString(R.string.feature_unauthorized))
+            (nav as? NavMain)?.goToAuthorizationPage()
+            return
+        }
+
+        val navController = this.navController ?: return
+        val navAction = navController.graph.getAction(request.featureActionId) ?: return
+
+        val targetDestinationId = navAction.destinationId.takeIf { it != 0 } ?: return
+        val targetNode = navController.graph.findNode(targetDestinationId) as? NavGraph ?: return
+
+        if (isAlreadyOnTargetScreen(navController, targetNode)) {
+            showToast(getString(R.string.feature_already_on_screen))
+            return
+        }
+
+        navController.navigate(request.featureActionId, request.args)
+    }
+
+    private fun isAlreadyOnTargetScreen(
+        navController: NavController,
+        targetGraph: NavGraph
+    ): Boolean {
+        val currentDestination = navController.currentDestination
+        val targetGraphStartDestinationId = targetGraph.startDestinationId
+        return currentDestination?.id == targetGraphStartDestinationId
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun getNavController(): NavController? {

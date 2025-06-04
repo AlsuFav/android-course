@@ -1,7 +1,6 @@
 package ru.fav.starlight.data.util
 
 import com.google.gson.Gson
-import ru.fav.starlight.domain.model.HttpErrorModel
 
 object ErrorParser {
 

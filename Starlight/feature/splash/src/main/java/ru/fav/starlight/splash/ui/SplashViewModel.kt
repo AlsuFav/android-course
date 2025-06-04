@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import ru.fav.starlight.presentation.R
 import ru.fav.starlight.domain.exception.NoApiKeyException
 import ru.fav.starlight.domain.provider.ResourceProvider
+import ru.fav.starlight.domain.usecase.FetchRemoteConfigUseCase
 import ru.fav.starlight.domain.usecase.GetApiKeyUseCase
 import ru.fav.starlight.navigation.NavMain
 import ru.fav.starlight.splash.ui.state.SplashEffect
@@ -22,9 +23,16 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val getApiKeyUseCase: GetApiKeyUseCase,
+    private val fetchRemoteConfigUseCase: FetchRemoteConfigUseCase,
     private val resourceProvider: ResourceProvider,
     private val navMain: NavMain,
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            fetchRemoteConfigUseCase()
+        }
+    }
 
     private val _splashState = MutableStateFlow<SplashState>(SplashState.Loading)
     val splashState = _splashState.asStateFlow()

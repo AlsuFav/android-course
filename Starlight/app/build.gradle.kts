@@ -5,6 +5,8 @@ plugins {
     id ("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.detekt)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.crashlytics)
 }
 
 android {
@@ -59,6 +61,7 @@ dependencies {
     implementation(project(path = ":core:data"))
     implementation(project(path = ":core:domain"))
     implementation(project(path = ":core:navigation"))
+    implementation(project(path = ":core:notification"))
     implementation(project(path = ":core:network"))
     implementation(project(path = ":core:util"))
 
@@ -75,6 +78,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.fragment)
     implementation(libs.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
@@ -82,4 +87,10 @@ dependencies {
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
     implementation(libs.viewbinding.property.delegate)
+
+    // Firebase
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.remote.config)
 }

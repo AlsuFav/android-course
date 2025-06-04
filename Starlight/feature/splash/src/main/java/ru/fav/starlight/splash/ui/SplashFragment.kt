@@ -1,9 +1,14 @@
 package ru.fav.starlight.splash.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.fav.starlight.splash.R
@@ -26,6 +31,7 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         super.onViewCreated(view, savedInstanceState)
 
         observeViewModel()
+        requestNotificationPermissionIfNeeded()
         splashViewModel.reduce(event = SplashEvent.CheckApiKey)
     }
 
@@ -43,6 +49,22 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
                 is SplashState.Error.NoApiKey -> {}
 
                 is SplashState.Error.GlobalError -> {}
+            }
+        }
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    1001
+                )
             }
         }
     }

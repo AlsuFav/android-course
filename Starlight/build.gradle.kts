@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.compose.compiler.plugin) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.crashlytics) apply false
 }
 
 private val versionMajor = 1

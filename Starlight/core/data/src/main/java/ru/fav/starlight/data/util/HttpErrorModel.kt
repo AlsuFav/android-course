@@ -1,4 +1,4 @@
-package ru.fav.starlight.domain.model
+package ru.fav.starlight.data.util
 
 data class HttpErrorModel(
     val error: HttpError = HttpError()

@@ -17,7 +17,9 @@ import ru.fav.starlight.domain.exception.NetworkException
 import ru.fav.starlight.domain.exception.ServerException
 import ru.fav.starlight.domain.provider.DateProvider
 import ru.fav.starlight.domain.provider.ResourceProvider
+import ru.fav.starlight.domain.usecase.CheckDetailsAvailabilityUseCase
 import ru.fav.starlight.domain.usecase.GetNasaImagesUseCase
+import ru.fav.starlight.domain.usecase.SetDateAnalyticsUseCase
 import ru.fav.starlight.navigation.NavMain
 import ru.fav.starlight.search.ui.state.DateType
 import ru.fav.starlight.search.ui.state.SearchEffect
@@ -29,6 +31,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val getNasaImagesUseCase: GetNasaImagesUseCase,
+    private val checkDetailsAvailabilityUseCase: CheckDetailsAvailabilityUseCase,
+    private val setDateAnalyticsUseCase: SetDateAnalyticsUseCase,
     private val dateProvider: DateProvider,
     private val resourceProvider: ResourceProvider,
     private val cacheManager: NasaImagesCacheManager,
@@ -52,8 +56,8 @@ class SearchViewModel @Inject constructor(
             is SearchEvent.OnStartDateClicked -> showDatePicker(DateType.START)
             is SearchEvent.OnEndDateClicked -> showDatePicker(DateType.END)
             is SearchEvent.OnDateSelected -> onDateSelected(event.type, event.calendar)
-            is SearchEvent.OnNasaImageClicked -> navigateToDetails(event.date)
-            SearchEvent.OnErrorDialogDismissed -> dismissErrorDialog()
+            is SearchEvent.OnNasaImageClicked -> navigateToDetailsIfAvailable(event.date)
+            is SearchEvent.OnErrorDialogDismissed -> dismissErrorDialog()
         }
     }
 
@@ -181,6 +185,17 @@ class SearchViewModel @Inject constructor(
                 minDateMillis = minDateCalendar.timeInMillis,
                 initialDate = initialCalendar
             ))
+        }
+    }
+
+    private fun navigateToDetailsIfAvailable(date: String) {
+        setDateAnalyticsUseCase(date)
+        if (checkDetailsAvailabilityUseCase()) {
+            navigateToDetails(date)
+        } else {
+            viewModelScope.launch {
+                _effect.emit(SearchEffect.ShowToast(resourceProvider.getString(R.string.details_not_available)))
+            }
         }
     }
 
