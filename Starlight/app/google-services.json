@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "289751104048",
+    "project_id": "starlight-48d1e",
+    "storage_bucket": "starlight-48d1e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289751104048:android:1b7e9942f493b9d1690bf5",
+        "android_client_info": {
+          "package_name": "ru.fav.starlight"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYhkSbXeRL9EyIkJyHGgA89tyfKyqK5Wo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
