@@ -16,3 +16,4 @@ private val versionMinor = 0
 
 val versionName by extra(initialValue = "$versionMajor.$versionMinor")
 val versionCode by extra(initialValue = versionMajor * 1000 + versionMinor * 10)
+
