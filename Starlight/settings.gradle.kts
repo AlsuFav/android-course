@@ -21,4 +21,14 @@ dependencyResolutionManagement {
 
 rootProject.name = "Starlight"
 include(":app")
- 
+include(":core:presentation")
+include(":core:data")
+include(":core:domain")
+include(":core:navigation")
+include(":core:network")
+include(":core:util")
+include(":feature:splash")
+include(":feature:authorization")
+include(":feature:profile")
+include(":feature:search")
+include(":feature:details")
