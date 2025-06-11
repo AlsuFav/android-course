@@ -1,0 +1,21 @@
+<resources>
+    <string name="start_date">Start date</string>
+    <string name="select_start_date">Select start date</string>
+    <string name="end_date">End date</string>
+    <string name="select_end_date">Select end date</string>
+    <string name="fetch_nasa_images">Fetch NASA Images</string>
+
+    <string name="date_picker_icon">Date picker icon</string>
+
+    <string name="nasa_image">NASA image</string>
+    <string name="nasa_image_date">NASA image date</string>
+    <string name="nasa_image_title">NASA image title</string>
+
+    <string name="error_start_date_after_end_date">Start date should not be after end date</string>
+    <string name="error_dates_after">Dates should not be after </string>
+
+    <string name="from_cache">Feching data from cache</string>
+    <string name="from_api">Feching data from api</string>
+
+    <string name="details_not_available">Unfortunately, details page is not available</string>
+</resources>

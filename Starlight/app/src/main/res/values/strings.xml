@@ -1,0 +1,11 @@
+<resources>
+so    <string name="default_notification_channel_id">default channel</string>
+    <string name="low_importance">Low importance</string>
+    <string name="default_importance">Default importance</string>
+    <string name="high_importance">High importance</string>
+    <string name="max_importance">Maximal importance</string>
+    <string name="default_notification_title">Default notification title</string>
+    <string name="default_notification_message">Default notification message</string>
+    <string name="feature_unauthorized">You are unauthorized to reach the screen</string>
+    <string name="feature_already_on_screen">You are already on screen</string>
+</resources>
