@@ -1,9 +1,0 @@
-<resources>
-    <string name="points_count">Points count</string>
-    <string name="values">Values comma-separated</string>
-    <string name="build_graph">Build graph</string>
-
-    <string name="error_fill_all_fields">Please fill all fields</string>
-    <string name="error_points_count">Points count should be more than 1</string>
-    <string name="error_values_count_not_the_same">Values count should be the same as points count</string>
-</resources>
