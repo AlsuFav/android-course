@@ -1,5 +1,6 @@
 <resources>
-    <string name="default_notification_channel_id">default channel</string>    <string name="low_importance">Low importance</string>
+so    <string name="default_notification_channel_id">default channel</string>
+    <string name="low_importance">Low importance</string>
     <string name="default_importance">Default importance</string>
     <string name="high_importance">High importance</string>
     <string name="max_importance">Maximal importance</string>

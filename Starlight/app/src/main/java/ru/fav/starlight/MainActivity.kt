@@ -66,10 +66,10 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
 
         navController?.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id) {
-                ru.fav.starlight.splash.R.id.destination_splash -> hideBottomNavigation()
-                ru.fav.starlight.authorization.R.id.destination_authorization -> hideBottomNavigation()
-                ru.fav.starlight.details.R.id.destination_details -> hideBottomNavigation()
-                else -> showBottomNavigation()
+                ru.fav.starlight.splash.R.id.destination_splash -> showBottomNavigation(false)
+                ru.fav.starlight.authorization.R.id.destination_authorization -> showBottomNavigation(false)
+                ru.fav.starlight.details.R.id.destination_details -> showBottomNavigation(false)
+                else -> showBottomNavigation(true)
             }
         }
     }
@@ -98,12 +98,8 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
         }
     }
 
-    private fun showBottomNavigation() {
-        viewBinding.mainBottomNavigation.visibility = View.VISIBLE
-    }
-
-    private fun hideBottomNavigation() {
-        viewBinding.mainBottomNavigation.visibility = View.GONE
+    private fun showBottomNavigation(isVisible: Boolean) {
+        viewBinding.mainBottomNavigation.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     private fun observeAppEvents() {
