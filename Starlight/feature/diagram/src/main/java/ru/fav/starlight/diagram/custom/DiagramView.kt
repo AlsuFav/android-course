@@ -44,15 +44,14 @@ class DiagramView @JvmOverloads constructor(
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        textSize = context.spToPx(16f)
+        textSize = context.spToPx(18f)
         typeface = Typeface.DEFAULT_BOLD
     }
     private val textOutlinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        textSize = context.spToPx(16f)
+        textSize = context.spToPx(18f)
         typeface = Typeface.DEFAULT_BOLD
         style = Paint.Style.STROKE
         strokeWidth = context.dpToPx(3f)
-        color = Color.WHITE
     }
 
     private val minSectors = 2
@@ -167,14 +166,9 @@ class DiagramView @JvmOverloads constructor(
         centerY = h / 2f
         maxRadius = minOf(centerX, centerY) - viewPadding
 
-        diagramData?.let { data ->
-            val numSectors = data.sectors.size
-            if (numSectors > 0) {
-                val totalPaddingSpace = (numSectors - 1) * ringPadding
-                val availableSpace = maxRadius - centerClearanceRadius - totalPaddingSpace
-                ringWidth = availableSpace / numSectors
-            }
-        }
+        val totalPaddingSpace = (maxSectors - 1) * ringPadding
+        val availableSpace = maxRadius - centerClearanceRadius - totalPaddingSpace
+        ringWidth = availableSpace / maxSectors
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -235,7 +229,7 @@ class DiagramView @JvmOverloads constructor(
     }
 
     private fun drawPercentage(canvas: Canvas, sector: DiagramSector, ringIndex: Int) {
-        val percentageX = width - percentageWidth + context.dpToPx(20f)
+        val percentageX = width - percentageWidth + context.dpToPx(30f)
 
         val innerRadius = centerClearanceRadius + (ringIndex * (ringWidth + ringPadding))
         val ringCenterRadius = innerRadius + ringWidth / 2f

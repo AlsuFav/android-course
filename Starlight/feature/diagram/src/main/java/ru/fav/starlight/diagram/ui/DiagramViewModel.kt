@@ -23,18 +23,13 @@ class DiagramViewModel @Inject constructor() : ViewModel() {
     }
 
     private val DIAGRAM_COLORS = listOf(
-        "#FFC107".toColorInt(),
-        "#4CAF50".toColorInt(),
-        "#2196F3".toColorInt(),
         "#E91E63".toColorInt(),
         "#9C27B0".toColorInt(),
-        "#FF5722".toColorInt(),
-        "#00BCD4".toColorInt(),
-        "#795548".toColorInt(),
-        "#607D8B".toColorInt(),
-        "#F44336".toColorInt(),
-        "#009688".toColorInt(),
-        "#3F51B5".toColorInt()
+        "#3F51B5".toColorInt(),
+        "#2196F3".toColorInt(),
+        "#673AB7".toColorInt(),
+        "#852A62".toColorInt(),
+        "#00BCD4".toColorInt()
     )
 
     private val MIN_SECTORS = 2

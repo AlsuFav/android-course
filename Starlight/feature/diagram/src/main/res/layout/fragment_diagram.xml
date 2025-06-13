@@ -28,8 +28,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/generateButton"
         app:line_color="@color/gray"
-        app:sector_values="10,51,61,31,1,70,100"
-        app:sector_colors="#2196F3,#607D8B,#00BCD4,#8BC34A,#2196F8,#607D88,#00BCD8"
+        app:sector_values="20,100,61,1,36,80"
+        app:sector_colors="#E91E63,#673AB7,#9C27B0,#3F51B5,#852A62,#03A9F4"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp" />
 
