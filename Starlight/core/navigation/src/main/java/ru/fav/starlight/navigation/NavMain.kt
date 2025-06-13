@@ -17,4 +17,6 @@ interface NavMain {
     fun goToDetailsPage(date: String)
 
     fun goToGraphPage()
+
+    fun goToDiagramPage()
 }

@@ -48,4 +48,8 @@ class NavMainImpl @Inject constructor(
     override fun goToGraphPage() {
         navigatorDelegate.navigate(action = R.id.action_global_graph)
     }
+
+    override fun goToDiagramPage() {
+        navigatorDelegate.navigate(action = R.id.action_global_diagram)
+    }
 }

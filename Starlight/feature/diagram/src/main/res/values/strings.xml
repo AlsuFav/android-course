@@ -1,0 +1,5 @@
+<resources>
+    <string name="data_from_attrs">// this is data from attrs</string>
+    <string name="generated_data">// this is generated data</string>
+    <string name="generate_new_diagram">Generate New Diagram</string>
+</resources>
