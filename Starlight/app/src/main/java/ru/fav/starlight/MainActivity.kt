@@ -89,6 +89,10 @@ class MainActivity : AppCompatActivity(), Nav.Provider {
                     (nav as? NavMain)?.goToGraphPage()
                     true
                 }
+                R.id.nav_diagram -> {
+                    (nav as? NavMain)?.goToDiagramPage()
+                    true
+                }
                 R.id.nav_profile -> {
                     (nav as? NavMain)?.goToProfilePage()
                     true
